@@ -23,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) { // If WordPress is not loaded.
 }
 
 // Load the dependencies installed through composer.
+require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/src/plugin.php';
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/src/support/exceptions.php';

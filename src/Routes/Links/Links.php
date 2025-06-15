@@ -2,10 +2,15 @@
 
 namespace USER_STORY\Routes\Links;
 
+use USER_STORY\Components\Devices\Devices;
+use USER_STORY\Exceptions\BaseException;
 use USER_STORY\Routes\AbstractRoute;
+use USER_STORY\Traits\Routes\HasDeviceSupport;
 use WP_Error;
 
 class Links extends AbstractRoute {
+
+	use HasDeviceSupport;
 
 	/**
 	 * Register routes
@@ -35,9 +40,22 @@ class Links extends AbstractRoute {
 	 *
 	 * @param \WP_REST_Request $request \WP_REST_Request object.
 	 *
-	 * @return true
+	 * @return true|WP_Error
 	 */
 	public function create_item_permissions_check( $request ) {
+		$device = $this->get_device( $request );
+
+		if ( null === $device ) {
+			return new WP_Error( 'rest_forbidden', esc_html__( 'Unknown device', 'user-story' ), array( 'status' => 403 ) );
+		} elseif ( false === $device ) {
+			try {
+				$device_ip = Devices::create( user_story_get_ip(), $request->get_header( 'User-Agent' ), null );
+				header( 'X-Device: ' . $device_ip->get_device()->get_uuid() );
+			} catch ( BaseException $e ) {
+				return new WP_Error( 'unknown_error', $e->getMessage(), array( 'status' => 500 ) );
+			}
+		}
+
 		return true;
 	}
 

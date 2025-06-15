@@ -146,8 +146,8 @@ class Device_IP extends AbstractObject {
 	 */
 	protected function column_map() {
 		return array(
-			'device_id' => $this->device->get_uuid(),
-			'ip'        => $this->ip,
+			'device_uuid' => $this->device->get_uuid(),
+			'ip'          => $this->ip,
 		);
 	}
 

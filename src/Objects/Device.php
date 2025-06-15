@@ -4,6 +4,7 @@ namespace USER_STORY\Objects;
 
 use DateTime;
 use Ramsey\Uuid\Uuid;
+use USER_STORY\Exceptions\DatabaseException;
 use WP_User;
 
 class Device extends AbstractObject {
@@ -151,17 +152,23 @@ class Device extends AbstractObject {
 	 * Save device object
 	 *
 	 * @return void
+	 *
+	 * @throws DatabaseException Throws database exception on database error.
 	 */
 	public function save() {
 		global $wpdb;
 
 		if ( $this->uuid ) {
-			$wpdb->update( $wpdb->devices, $this->column_map(), array( 'uuid' => $this->uuid ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$ret = $wpdb->update( $wpdb->devices, $this->column_map(), array( 'uuid' => $this->uuid ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		} else {
 			$values         = $this->column_map();
 			$values['uuid'] = Uuid::uuid4()->toString();
 			$this->uuid     = $values['uuid'];
-			$wpdb->insert( $wpdb->devices, $values ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$ret            = $wpdb->insert( $wpdb->devices, $values ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		}
+
+		if ( false === $ret ) {
+			throw new DatabaseException( esc_html( $wpdb->last_error ) );
 		}
 	}
 }
