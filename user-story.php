@@ -2,19 +2,19 @@
 /**
  * Plugin Template
  *
- * @package     TO FILL
+ * @package     user-story
  * @author      Mathieu Lamiot
  * @copyright   TO FILL
  * @license     GPL-2.0-or-later
  *
  * @wordpress-plugin
- * Plugin Name: TO FILL
- * Version:     TO FILL
+ * Plugin Name: User Story Plugin
+ * Version:     1.0.0
  * Description: TO FILL
  * Author:      Mathieu Lamiot
  */
 
-namespace ROCKET_WP_CRAWLER;
+namespace USER_STORY;
 
 define( 'ROCKET_CRWL_PLUGIN_FILENAME', __FILE__ ); // Filename of the plugin, including the file.
 
@@ -34,9 +34,9 @@ require_once __DIR__ . '/src/support/exceptions.php';
  * @return void
  */
 function wpc_crawler_plugin_init() {
-	$wpc_crawler_plugin = new Rocket_Wpc_Plugin_Class();
+	$wpc_crawler_plugin = new User_Story_Plugin();
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\wpc_crawler_plugin_init' );
 
-register_activation_hook( __FILE__, __NAMESPACE__ . '\Rocket_Wpc_Plugin_Class::wpc_activate' );
-register_uninstall_hook( __FILE__, __NAMESPACE__ . '\Rocket_Wpc_Plugin_Class::wpc_uninstall' );
+register_activation_hook( __FILE__, __NAMESPACE__ . '\User_Story_Plugin::wpc_activate' );
+register_uninstall_hook( __FILE__, __NAMESPACE__ . '\User_Story_Plugin::wpc_uninstall' );

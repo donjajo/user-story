@@ -12,7 +12,8 @@
         }
     ],
     "require"       : {
-        "php" : ">=7.3"
+        "php": ">=7.3",
+        "ramsey/uuid": "5.x-dev"
     },
     "require-dev":{
         "raveren/kint": "~1.0",

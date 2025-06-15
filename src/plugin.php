@@ -8,12 +8,12 @@
  * @license     GPL-2.0-or-later
  */
 
-namespace ROCKET_WP_CRAWLER;
+namespace USER_STORY;
 
 /**
  * Main plugin class. It manages initialization, install, and activations.
  */
-class Rocket_Wpc_Plugin_Class {
+class User_Story_Plugin {
 	/**
 	 * Manages plugin initialization
 	 *
@@ -23,6 +23,74 @@ class Rocket_Wpc_Plugin_Class {
 
 		// Register plugin lifecycle hooks.
 		register_deactivation_hook( ROCKET_CRWL_PLUGIN_FILENAME, array( $this, 'wpc_deactivate' ) );
+		self::define_tables();
+	}
+
+	/**
+	 * Definee table variables in wpdb
+	 *
+	 * @return void
+	 */
+	private static function define_tables() {
+		global $wpdb;
+
+		$wpdb->devices             = $wpdb->prefix . 'devices';
+		$wpdb->device_ips          = $wpdb->prefix . 'device_ips';
+		$wpdb->visible_links       = $wpdb->prefix . 'visible_links';
+		$wpdb->visible_link_visits = $wpdb->prefix . 'visible_link_visits';
+	}
+
+	/**
+	 * Create MySQL tables
+	 *
+	 * @return void
+	 */
+	private static function create_tables() {
+		global $wpdb;
+
+		self::define_tables();
+		$wpdb->show_errors();
+		$tables = array(
+			"CREATE TABLE IF NOT EXISTS {$wpdb->devices} (
+				uuid CHAR(36) NOT NULL PRIMARY KEY,
+				user_id BIGINT UNSIGNED NULL,
+				user_agent VARCHAR(255) NULL,
+				created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+			)",
+			"CREATE TABLE IF NOT EXISTS {$wpdb->device_ips} (
+				ID BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+				device_uuid CHAR(36) NOT NULL,
+				ip CHAR(45) NOT NULL,
+				created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				FOREIGN KEY devices_fk (device_uuid) REFERENCES {$wpdb->devices} (uuid) ON DELETE CASCADE ON UPDATE CASCADE
+            )",
+			"CREATE TABLE IF NOT EXISTS {$wpdb->visible_links} (
+				ID BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+				scheme CHAR(20) NOT NULL,
+				hostname VARCHAR(261) NULL, -- max domain name is 255, max port is 65535, plus a colon
+				path VARCHAR(255) NOT NULL,
+				query VARCHAR(100) NULL,
+				fragment VARCHAR(50) NULL,
+				UNIQUE KEY url (hostname, path, query, fragment),
+				KEY scheme (scheme)
+            )",
+			"CREATE TABLE IF NOT EXISTS {$wpdb->visible_link_visits} (
+				ID BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+				visible_link_id BIGINT UNSIGNED NOT NULL,
+				device_ip_id BIGINT UNSIGNED NOT NULL,
+				height SMALLINT UNSIGNED NOT NULL,
+				width SMALLINT UNSIGNED NOT NULL,
+				created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				KEY (height),
+				KEY (width),
+				FOREIGN KEY link_fk (visible_link_id) REFERENCES {$wpdb->visible_links} (ID) ON DELETE RESTRICT ON UPDATE CASCADE,
+				FOREIGN KEY devices_fk (device_ip_id) REFERENCES {$wpdb->device_ips} (ID) ON DELETE RESTRICT ON UPDATE CASCADE
+            )",
+		);
+
+		foreach ( $tables as $table ) {
+			$wpdb->query( $table );
+		}
 	}
 
 	/**
@@ -37,6 +105,8 @@ class Rocket_Wpc_Plugin_Class {
 		}
 		$plugin = isset( $_REQUEST['plugin'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['plugin'] ) ) : '';
 		check_admin_referer( "activate-plugin_{$plugin}" );
+
+		self::create_tables();
 	}
 
 	/**
