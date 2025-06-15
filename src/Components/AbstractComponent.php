@@ -99,4 +99,13 @@ abstract class AbstractComponent {
 	 * @return mixed
 	 */
 	abstract public static function find( $id );
+
+	/**
+	 * Provide component's rest routes
+	 *
+	 * @return array
+	 */
+	public static function rest_routes() {
+		return array();
+	}
 }

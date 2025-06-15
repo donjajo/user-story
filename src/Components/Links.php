@@ -4,9 +4,10 @@ namespace USER_STORY\Components;
 
 use USER_STORY\Components\AbstractComponent;
 use USER_STORY\Objects\Link;
+use USER_STORY\Routes\AbstractRoute;
+use USER_STORY\Routes\Links\Links as Route;
 
 class Links extends AbstractComponent {
-
 
 	/**
 	 * Find link by ID
@@ -25,5 +26,14 @@ class Links extends AbstractComponent {
 				return $row ? Link::load_from_object( $row ) : null;
 			}
 		);
+	}
+
+	/**
+	 * Import associated REST Routes
+	 *
+	 * @return \class-string[]
+	 */
+	public static function rest_routes() {
+		return array( Route::class );
 	}
 }

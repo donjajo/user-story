@@ -10,10 +10,21 @@
 
 namespace USER_STORY;
 
+use USER_STORY\Components\AbstractComponent;
+use USER_STORY\Components\Links;
+
 /**
  * Main plugin class. It manages initialization, install, and activations.
  */
 class User_Story_Plugin {
+
+	/**
+	 * Components the require initialization
+	 */
+	const COMPONENTS = array(
+		Links::class,
+	);
+
 	/**
 	 * Manages plugin initialization
 	 *
@@ -22,8 +33,37 @@ class User_Story_Plugin {
 	public function __construct() {
 
 		// Register plugin lifecycle hooks.
-		register_deactivation_hook( ROCKET_CRWL_PLUGIN_FILENAME, array( $this, 'wpc_deactivate' ) );
+		register_deactivation_hook( USER_STORY_PLUGIN_FILENAME, array( $this, 'wpc_deactivate' ) );
 		self::define_tables();
+
+		$this->init_components();
+	}
+
+	/**
+	 * Initialize components
+	 *
+	 * @return void
+	 */
+	private function init_components() {
+		foreach ( self::COMPONENTS as $component ) {
+			/**
+			 * Component instance
+			 *
+			 * @var AbstractComponent $component
+			 */
+			$component = new $component();
+			if ( $component::rest_routes() ) {
+				foreach ( $component::rest_routes() as $route ) {
+					add_action(
+						'rest_api_init',
+						function () use ( $route, $component ) {
+							$route = new $route( $component );
+							$route->register_routes();
+						}
+					);
+				}
+			}
+		}
 	}
 
 	/**
@@ -89,6 +129,7 @@ class User_Story_Plugin {
 		);
 
 		foreach ( $tables as $table ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 			$wpdb->query( $table );
 		}
 	}
