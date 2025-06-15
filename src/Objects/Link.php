@@ -195,7 +195,7 @@ class Link extends AbstractObject {
 			->set_host_name( $row->hostname )
 			->set_query( $row->query )
 			->set_fragment( $row->fragment )
-			->set_id( $row->id );
+			->set_id( $row->ID );
 	}
 
 	/**

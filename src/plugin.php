@@ -11,7 +11,7 @@
 namespace USER_STORY;
 
 use USER_STORY\Components\AbstractComponent;
-use USER_STORY\Components\Links;
+use USER_STORY\Components\Links\Links;
 
 /**
  * Main plugin class. It manages initialization, install, and activations.
@@ -95,7 +95,8 @@ class User_Story_Plugin {
 				uuid CHAR(36) NOT NULL PRIMARY KEY,
 				user_id BIGINT UNSIGNED NULL,
 				user_agent VARCHAR(255) NULL,
-				created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+				created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				FOREIGN KEY users_fk (user_id) REFERENCES {$wpdb->users} (ID) ON DELETE SET NULL ON UPDATE CASCADE
 			)",
 			"CREATE TABLE IF NOT EXISTS {$wpdb->device_ips} (
 				ID BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -123,6 +124,7 @@ class User_Story_Plugin {
 				created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				KEY (height),
 				KEY (width),
+				KEY (created_at),
 				FOREIGN KEY link_fk (visible_link_id) REFERENCES {$wpdb->visible_links} (ID) ON DELETE RESTRICT ON UPDATE CASCADE,
 				FOREIGN KEY devices_fk (device_ip_id) REFERENCES {$wpdb->device_ips} (ID) ON DELETE RESTRICT ON UPDATE CASCADE
             )",

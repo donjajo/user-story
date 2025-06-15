@@ -4,8 +4,8 @@ namespace USER_STORY\Exceptions;
 
 use USER_STORY\Exceptions\BaseException;
 
-class DatabaseException extends BaseException
-{
+class DatabaseException extends BaseException {
+
 	/**
 	 * Exception code
 	 *

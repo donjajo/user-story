@@ -2,7 +2,7 @@
 
 namespace USER_STORY\Exceptions;
 
-class BaseException extends \Exception
-{
+class BaseException extends \Exception {
+
 
 }
