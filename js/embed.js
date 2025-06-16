@@ -34,6 +34,10 @@ const userStoryUpdateDevice = ( id ) => {
 	window.localStorage.setItem( 'userStoryDeviceId', id );
 };
 
+const userStoryDeleteDevice = () => {
+	window.localStorage.removeItem( 'userStoryDeviceId' );
+};
+
 const userStoryGetDevice = () => {
 	return window.localStorage.getItem( 'userStoryDeviceId' );
 };
@@ -57,10 +61,17 @@ const userStoryUpdate = async ( links ) => {
 			userStoryUpdateDevice( response.headers.get( 'X-Device' ) );
 			return true;
 		} )
-		.catch( () => {
+		.catch( (error) => {
+			// If status is 403, it is likely invalid device ID. Maybe site cleared their devices?
+			if ( error?.status === 403) {
+				// Clear and resend
+				userStoryDeleteDevice()
+				userStoryInit()
+			}
 			return false;
 		} );
 };
+
 const userStoryObserverCallback = ( entries ) => {
 	const visibleLinks = [];
 	let hashValue = '';
