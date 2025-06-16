@@ -24,7 +24,10 @@ function user_story_db_start_transaction( $lock_query = '' ) {
 
 	if ( $lock_query ) {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-		$wpdb->query( $lock_query );
+		$wpdb->query(
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$lock_query
+		);
 	}
 }
 
@@ -127,4 +130,17 @@ function user_story_get_ip() {
 	}
 
 	return '';
+}
+
+/**
+ * Retrieve the site host
+ *
+ * Parses the site URL and returns the host component, including the port if specified.
+ *
+ * @return string The host of the site with optional port if present.
+ */
+function user_story_get_site_host() {
+	$parsed = wp_parse_url( site_url() );
+
+	return $parsed['host'] . ( isset( $parsed['port'] ) ? ':' . $parsed['port'] : '' );
 }

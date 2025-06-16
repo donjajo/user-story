@@ -56,6 +56,7 @@ class DeviceIPs extends AbstractComponent {
 			return $device_ip;
 		} catch ( DatabaseException $e ) {
 			if ( user_story_is_debug() ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 				error_log( $e->getMessage() );
 			}
 

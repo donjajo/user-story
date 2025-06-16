@@ -74,6 +74,7 @@ class Links extends AbstractComponent {
 			}
 		} catch ( DatabaseException $e ) {
 			if ( user_story_is_debug() ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 				error_log( $e->getMessage() );
 			}
 
@@ -109,8 +110,8 @@ class Links extends AbstractComponent {
 	/**
 	 * Retrieve a link record from the database by its URL.
 	 *
-	 * @param string $url The URL to search for.
-	 *
+	 * @param string      $url The URL to search for.
+	 * @param string|null $name URL Link.
 	 * @return Link|null
 	 */
 	public static function get_link_by_url( $url, $name = null ) {

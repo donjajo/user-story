@@ -68,6 +68,7 @@ class Devices extends AbstractComponent {
 			}
 		} catch ( DatabaseException $e ) {
 			if ( defined( 'WP_DEBUG_DISPLAY' ) && WP_DEBUG_DISPLAY ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 				error_log( $e->getMessage() );
 			}
 

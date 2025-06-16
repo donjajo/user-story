@@ -12,6 +12,7 @@ namespace USER_STORY;
 
 use USER_STORY\Components\AbstractComponent;
 use USER_STORY\Components\Links\Links;
+use USER_STORY\Components\Settings;
 
 /**
  * Main plugin class. It manages initialization, install, and activations.
@@ -23,6 +24,7 @@ class User_Story_Plugin {
 	 */
 	const COMPONENTS = array(
 		Links::class,
+		Settings::class,
 	);
 
 	/**
@@ -52,6 +54,9 @@ class User_Story_Plugin {
 			 * @var AbstractComponent $component
 			 */
 			$component = new $component();
+
+			$component->hooks();
+
 			if ( $component::rest_routes() ) {
 				foreach ( $component::rest_routes() as $route ) {
 					add_action(
@@ -89,6 +94,10 @@ class User_Story_Plugin {
 	 * @return void
 	 */
 	public static function enqueue_assets() {
+		if ( ! is_front_page() && ! is_home() ) {
+			return;
+		}
+
 		$embed_asset_file = include USER_STORY_PLUGIN_ASSETS_DIR . '/js/embed.asset.php';
 
 		wp_enqueue_script( 'user-story-embed-script', USER_STORY_PLUGIN_ASSETS_URL . '/js/embed.js', $embed_asset_file['dependencies'], $embed_asset_file['version'], true );
@@ -149,7 +158,10 @@ class User_Story_Plugin {
 
 		foreach ( $tables as $table ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$wpdb->query( $table );
+			$wpdb->query(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				$table
+			);
 		}
 	}
 

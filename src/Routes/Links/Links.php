@@ -4,6 +4,7 @@ namespace USER_STORY\Routes\Links;
 
 use USER_STORY\Components\Devices\DeviceIPs;
 use USER_STORY\Components\Devices\Devices;
+use USER_STORY\Components\Links\Visits;
 use USER_STORY\Exceptions\BaseException;
 use USER_STORY\Objects\Device_IP;
 use USER_STORY\Routes\AbstractRoute;
@@ -65,6 +66,33 @@ class Links extends AbstractRoute {
 				),
 			)
 		);
+
+		register_rest_route(
+			$this->namespace,
+			$this->resource_name,
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'permission_callback' => array( $this, 'get_items_permissions_check' ),
+				'callback'            => array( $this, 'get_items' ),
+				'args'                => array(
+					'filter' => array(
+						'required'          => true,
+						'validate_callback' => array( self::class, 'validate_filter' ),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$this->resource_name . '/filter-data',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'permission_callback' => array( $this, 'get_items_permissions_check' ),
+				'callback'            => array( $this, 'get_filter_data' ),
+				'args'                => array(),
+			)
+		);
 	}
 
 	/**
@@ -75,6 +103,52 @@ class Links extends AbstractRoute {
 	 */
 	public function validate_nonce( $nonce ) {
 		return wp_verify_nonce( $nonce, self::CREATE_NONCE_ACTION );
+	}
+
+	/**
+	 * Checks the permissions for retrieving items.
+	 *
+	 * @param WP_REST_Request $request WordPress Request Object.
+	 *
+	 * @return bool
+	 */
+	public function get_items_permissions_check( $request ) {
+		return is_user_logged_in() && current_user_can( 'manage_options' );
+	}
+
+	/**
+	 * Validates the provided filter parameters.
+	 *
+	 * @param array $filter Associative array containing filter parameters. Expected keys are 'start_date' and 'end_date'
+	 *                      with values in 'Y-m-d' date format.
+	 *
+	 * @return true|WP_Error True if the filter is valid. WP_Error if the filter is invalid.
+	 */
+	public static function validate_filter( $filter ) {
+		if ( ! is_array( $filter ) ) {
+			return new WP_Error( 'rest_invalid_param', esc_html__( 'filter is not an object', 'user-story' ), array( 'status' => 400 ) );
+		}
+
+		if ( empty( $filter['start_date'] ) || date_create_from_format( 'Y-m-d', $filter['start_date'] ) === false ) {
+			return new WP_Error( 'rest_invalid_param', esc_html__( 'start_date is required in the filter. Or start_date is not a valid date', 'user-story' ), array( 'status' => 400 ) );
+		}
+
+		if ( empty( $filter['end_date'] ) || date_create_from_format( 'Y-m-d', $filter['end_date'] ) === false ) {
+			return new WP_Error( 'rest_invalid_param', esc_html__( 'end_date is required in the filter. Or end_date is not a valid date', 'user-story' ), array( 'status' => 400 ) );
+		}
+
+		if ( ! empty( ( $filter['screen'] ) ) ) {
+			list ($height, $width) = explode( 'x', $filter['screen'] );
+			if ( ! is_numeric( $height ) || ! is_numeric( $width ) ) {
+				return new WP_Error( 'rest_invalid_param', esc_html__( 'screen is not a valid screen size', 'user-story' ), array( 'status' => 400 ) );
+			}
+		}
+
+		if ( ! empty( $filter['host'] ) && ! is_string( $filter['host'] ) ) {
+			return new WP_Error( 'rest_invalid_param', esc_html__( 'host is not a valid host', 'user-story' ), array( 'status' => 400 ) );
+		}
+
+		return true;
 	}
 
 	/**
@@ -175,5 +249,48 @@ class Links extends AbstractRoute {
 		} catch ( BaseException $e ) {
 			return new WP_Error( 'unknown_error', $e->getMessage(), array( 'status' => 500 ) );
 		}
+	}
+
+	/**
+	 * Retrieves the filter data for the API response.
+	 *
+	 * @param WP_REST_Request $request WordPress Request Object.
+	 *
+	 * @return WP_REST_Response Filter data wrapped in a REST response object.
+	 */
+	public function get_filter_data( $request ) {
+		return rest_ensure_response(
+			array(
+				'screens' => Visits::get_available_screens(),
+				'hosts'   => Visits::get_available_hosts(),
+			)
+		);
+	}
+
+	/**
+	 * Retrieves items based on the provided filters.
+	 *
+	 * @param WP_REST_Request $request WordPress Request Object containing parameters.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_items( $request ) {
+		$filter               = $request['filter'];
+		$filter['start_date'] = date_create_from_format( 'Y-m-d', $filter['start_date'] );
+		$filter['end_date']   = date_create_from_format( 'Y-m-d', $filter['end_date'] );
+		$filter['height']     = 0;
+		$filter['width']      = 0;
+
+		if ( ! empty( $filter['screen'] ) ) {
+			list ($filter['height'], $filter['width']) = explode( 'x', $filter['screen'] );
+			$filter['height']                          = (int) $filter['height'];
+			$filter['width']                           = (int) $filter['width'];
+		}
+
+		if ( ! empty( $filter['host'] ) ) {
+			$filter['host'] = sanitize_text_field( $filter['host'] );
+		}
+
+		return rest_ensure_response( Visits::get_reports( $filter ) );
 	}
 }

@@ -266,7 +266,7 @@ class Link extends AbstractObject {
 		}
 
 		if ( false === $ret ) {
-			throw new DatabaseException( $wpdb->last_error );
+			throw new DatabaseException( esc_html( $wpdb->last_error ) );
 		}
 	}
 }

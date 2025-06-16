@@ -8,7 +8,7 @@
  * @license     GPL-2.0-or-later
  */
 
-namespace ROCKET_WP_CRAWLER;
+namespace USER_STORY;
 
 // Automatically added when writing the WHOOPS section below to find the whoops functions.
 use Whoops\Handler\PrettyPageHandler;

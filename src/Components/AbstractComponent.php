@@ -108,4 +108,12 @@ abstract class AbstractComponent {
 	public static function rest_routes() {
 		return array();
 	}
+
+	/**
+	 * Override to add hooks to run
+	 *
+	 * @return void
+	 */
+	public function hooks() {
+	}
 }

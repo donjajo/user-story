@@ -6,8 +6,8 @@
   "author": "James Etu <me@donjajo.com>",
   "license": "MIT",
   "scripts": {
-    "start": "wp-scripts start js/embed.js --output-path=assets/js",
-    "build": "wp-scripts build js/embed.js --output-path=assets/js",
+    "start": "wp-scripts start js/embed.js js/settings.js --output-path=assets/js",
+    "build": "wp-scripts build js/embed.js js/settings.js --output-path=assets/js",
     "format": "wp-scripts format js/",
     "lint:js": "wp-scripts lint-js js/"
   },
@@ -16,6 +16,12 @@
   },
   "dependencies": {
     "@wordpress/api-fetch": "^7.25.0",
-    "js-sha1": "^0.7.0"
+    "@wordpress/components": "^29.11.0",
+    "@wordpress/dom-ready": "^4.25.0",
+    "@wordpress/element": "^6.25.0",
+    "@wordpress/i18n": "^5.25.0",
+    "@wordpress/url": "^4.25.0",
+    "js-sha1": "^0.7.0",
+    "moment": "^2.30.1"
   }
 }
