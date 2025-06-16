@@ -254,6 +254,26 @@ class Visits extends AbstractComponent {
 	}
 
 	/**
+	 * Removes expired visit records from the database.
+	 *
+	 * This method deletes visit records that were created more than seven days ago.
+	 *
+	 * @return void
+	 */
+	public static function cleanup_expired_visits() {
+		global $wpdb;
+
+		try {
+			user_story_db_start_transaction();
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->visible_link_visits} WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)", USER_STORY_EXPIRY_DAYS ) );
+		} finally {
+			user_story_db_commit_transaction();
+		}
+	}
+
+	/**
 	 * Retrieves a specific visit record from the database by its ID.
 	 *
 	 * @param int $id The unique identifier of the record to be retrieved.

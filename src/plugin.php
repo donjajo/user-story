@@ -36,7 +36,9 @@ class User_Story_Plugin {
 
 		// Register plugin lifecycle hooks.
 		register_deactivation_hook( USER_STORY_PLUGIN_FILENAME, array( $this, 'wpc_deactivate' ) );
-		self::define_tables();
+
+		add_action( 'init', array( self::class, 'define_tables' ) );
+		add_action( 'wp_enqueue_scripts', array( self::class, 'enqueue_assets' ) );
 
 		$this->init_components();
 	}
@@ -57,6 +59,14 @@ class User_Story_Plugin {
 
 			$component->hooks();
 
+			// Hook cron jobs.
+			if ( $component::cronies() ) {
+				foreach ( $component::cronies() as $crony ) {
+					new $crony();
+				}
+			}
+
+			// Register rest routes.
 			if ( $component::rest_routes() ) {
 				foreach ( $component::rest_routes() as $route ) {
 					add_action(
@@ -76,7 +86,7 @@ class User_Story_Plugin {
 	 *
 	 * @return void
 	 */
-	private static function define_tables() {
+	public static function define_tables() {
 		global $wpdb;
 
 		$wpdb->devices             = $wpdb->prefix . 'devices';
@@ -166,6 +176,33 @@ class User_Story_Plugin {
 	}
 
 	/**
+	 * Schedule component's cron jobs
+	 *
+	 * @return void
+	 */
+	private static function schedule_cronies() {
+		// Schedule cronies.
+		foreach ( self::COMPONENTS as $component ) {
+			foreach ( $component::cronies() as $crony ) {
+				$crony::schedule();
+			}
+		}
+	}
+
+	/**
+	 * Unschedule components's cron jobs
+	 *
+	 * @return void
+	 */
+	public static function unshedule_cronies() {
+		foreach ( self::COMPONENTS as $component ) {
+			foreach ( $component::cronies() as $crony ) {
+				$crony::unschedule();
+			}
+		}
+	}
+
+	/**
 	 * Handles plugin activation:
 	 *
 	 * @return void
@@ -179,6 +216,7 @@ class User_Story_Plugin {
 		check_admin_referer( "activate-plugin_{$plugin}" );
 
 		self::create_tables();
+		self::schedule_cronies();
 	}
 
 	/**
@@ -193,6 +231,8 @@ class User_Story_Plugin {
 		}
 		$plugin = isset( $_REQUEST['plugin'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['plugin'] ) ) : '';
 		check_admin_referer( "deactivate-plugin_{$plugin}" );
+
+		self::unshedule_cronies();
 	}
 
 	/**

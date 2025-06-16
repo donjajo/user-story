@@ -2,6 +2,12 @@
 
 namespace USER_STORY\Components;
 
+use USER_STORY\Cronies\AbstractCronie;
+
+/**
+ * Abstract class representing a generic component with utility methods for caching,
+ * and abstract methods for extending component functionality.
+ */
 abstract class AbstractComponent {
 
 	/**
@@ -106,6 +112,15 @@ abstract class AbstractComponent {
 	 * @return array
 	 */
 	public static function rest_routes() {
+		return array();
+	}
+
+	/**
+	 * Provide component related cronies
+	 *
+	 * @return array<AbstractCronie>
+	 */
+	public static function cronies() {
 		return array();
 	}
 

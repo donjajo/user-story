@@ -3,14 +3,18 @@
 namespace USER_STORY\Components\Links;
 
 use USER_STORY\Components\AbstractComponent;
+use USER_STORY\Cronies\Links\DeleteExpiredLinksCronie;
 use USER_STORY\Exceptions\BaseException;
 use USER_STORY\Exceptions\DatabaseException;
 use USER_STORY\Objects\Device_IP;
 use USER_STORY\Objects\Link;
 use USER_STORY\Objects\Visit;
-use USER_STORY\Routes\AbstractRoute;
 use USER_STORY\Routes\Links\Links as Route;
 
+/**
+ * Handles link-related operations such as retrieving, creating, and deleting links,
+ * and managing associated visits or interactions.
+ */
 class Links extends AbstractComponent {
 
 	/**
@@ -30,6 +34,30 @@ class Links extends AbstractComponent {
 				return $row ? Link::load_from_object( $row ) : null;
 			}
 		);
+	}
+
+	/**
+	 * Delete expired links from the database.
+	 *
+	 * Removes expired links by performing clean-up actions, including deleting records
+	 * without any associated visits, to ensure only active and valid links remain.
+	 *
+	 * @return void
+	 */
+	public static function deleted_expired_links() {
+		global $wpdb;
+
+		try {
+			user_story_db_start_transaction();
+
+			self::deleted_expired_links();
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$wpdb->query( "DELETE l FROM {$wpdb->visible_links} l LEFT JOIN {$wpdb->visible_link_visits} v ON v.visible_link_id = l.ID  WHERE v.ID IS NULL" );
+
+		} finally {
+			user_story_db_commit_transaction();
+		}
 	}
 
 	/**
@@ -180,5 +208,14 @@ class Links extends AbstractComponent {
 	 */
 	public static function rest_routes() {
 		return array( Route::class );
+	}
+
+	/**
+	 * Retrieve the list of cronies.
+	 *
+	 * @return array List of cronie classes.
+	 */
+	public static function cronies() {
+		return array( DeleteExpiredLinksCronie::class );
 	}
 }
