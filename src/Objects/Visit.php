@@ -52,6 +52,13 @@ class Visit extends AbstractObject {
 	 */
 	protected $created_at;
 
+	/**
+	 * X,Y Position
+	 *
+	 * @var string
+	 */
+	protected $position_xy;
+
 
 
 	/**
@@ -68,6 +75,7 @@ class Visit extends AbstractObject {
 			->set_link( Links::find( $row->visible_link_id ) )
 			->set_height( $row->height )
 			->set_width( $row->width )
+			->set_position_xy( $row->position_xy )
 			->set_device_ip( DeviceIPs::find( $row->device_ip_id ) );
 	}
 
@@ -82,6 +90,7 @@ class Visit extends AbstractObject {
 			'device_ip_id'    => $this->device_ip->get_id(),
 			'height'          => $this->height,
 			'width'           => $this->width,
+			'position_xy'     => $this->position_xy,
 		);
 	}
 
@@ -108,6 +117,28 @@ class Visit extends AbstractObject {
 		if ( false === $ret ) {
 			throw new DatabaseException( $wpdb->last_error );
 		}
+	}
+
+	/**
+	 * Get X,Y link position
+	 *
+	 * @return string
+	 */
+	public function get_position_xy() {
+		return $this->position_xy;
+	}
+
+	/**
+	 * Set X,Y position
+	 *
+	 * @param string $position_xy X,Y position.
+	 *
+	 * @return $this
+	 */
+	public function set_position_xy( $position_xy ) {
+		$this->position_xy = $position_xy;
+
+		return $this;
 	}
 
 	/**

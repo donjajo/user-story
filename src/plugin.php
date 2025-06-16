@@ -126,6 +126,7 @@ class User_Story_Plugin {
 				path VARCHAR(255) NOT NULL,
 				query VARCHAR(100) NULL,
 				fragment VARCHAR(50) NULL,
+				name LONGTEXT NOT NULL,
 				UNIQUE KEY url (hostname, path, query, fragment),
 				KEY scheme (scheme)
             )",
@@ -135,6 +136,7 @@ class User_Story_Plugin {
 				device_ip_id BIGINT UNSIGNED NOT NULL,
 				height SMALLINT UNSIGNED NOT NULL,
 				width SMALLINT UNSIGNED NOT NULL,
+				position_xy LONGTEXT NOT NULL,
 				created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				KEY (height),
 				KEY (width),

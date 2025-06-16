@@ -101,9 +101,38 @@ class Links extends AbstractRoute {
 		}
 
 		foreach ( $links as $link ) {
-			if ( ! is_string( $link ) || filter_var( $link, FILTER_VALIDATE_URL ) === false ) {
+			if ( ! is_array( $link ) ) {
+				return new WP_Error( 'rest_invalid_param', __( 'links items is not an object', 'user-story' ), array( 'status' => 400 ) );
+			}
+
+			if ( empty( $link['url'] ) ) {
+				return new WP_Error( 'rest_invalid_param', __( 'links item is missing url property', 'user-story' ), array( 'status' => 400 ) );
+			}
+
+			if ( empty( $link['name'] ) ) {
+				return new WP_Error( 'rest_invalid_param', __( 'links item is missing name property', 'user-story' ), array( 'status' => 400 ) );
+			}
+
+			if ( ! array_key_exists( 'x', $link ) ) {
+				return new WP_Error( 'rest_invalid_param', __( 'links item is missing x property', 'user-story' ), array( 'status' => 400 ) );
+			}
+
+			if ( ! array_key_exists( 'y', $link ) ) {
+				return new WP_Error( 'rest_invalid_param', __( 'links item is missing y property', 'user-story' ), array( 'status' => 400 ) );
+			}
+
+			if ( ! is_string( $link['url'] ) || filter_var( $link['url'], FILTER_VALIDATE_URL ) === false ) {
 				/* translators: %s is replaced with "string" */
 				return new WP_Error( 'rest_invalid_param', sprintf( __( 'Invalid link %s', 'user-story' ), $link ), array( 'status' => 400 ) );
+			}
+
+			if ( ! is_string( $link['name'] ) ) {
+				/* translators: %s is replaced with "string" */
+				return new WP_Error( 'rest_invalid_param', sprintf( __( 'name cannot be empty for link: %s', 'user-story' ), $link['url'] ), array( 'status' => 400 ) );
+			}
+
+			if ( ! is_numeric( $link['x'] ) || ! is_numeric( $link['y'] ) ) {
+				return new WP_Error( 'rest_invalid_param', __( 'x and y property must be an integer', 'user-story' ), array( 'status' => 400 ) );
 			}
 		}
 
@@ -123,7 +152,7 @@ class Links extends AbstractRoute {
 	public function create_item( $request ) {
 		try {
 			foreach ( $request['links'] as $link ) {
-				$this->component::create( $link, self::$device_ip, $request['width'], $request['height'] );
+				$this->component::create( $link['url'], self::$device_ip, $request['width'], $request['height'], $link['x'], $link['y'], $link['name'] );
 			}
 
 			return rest_ensure_response( '' );

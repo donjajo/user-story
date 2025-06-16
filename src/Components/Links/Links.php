@@ -33,24 +33,27 @@ class Links extends AbstractComponent {
 	}
 
 	/**
-	 * Create a visit for the given URL with device and viewport details.
+	 * Create a visit entry for a specified URL and device details.
 	 *
-	 * @param string    $url The URL to create a visit for.
-	 * @param Device_IP $device_ip The IP address of the device making the visit.
-	 * @param int       $width The width of the device's viewport.
-	 * @param int       $height The height of the device's viewport.
+	 * @param string $url The URL to associate with the visit.
+	 * @param string $device_ip The IP address of the device making the visit.
+	 * @param int    $width The width of the device screen.
+	 * @param int    $height The height of the device screen.
+	 * @param int    $x The x-coordinate of the pointer during the visit.
+	 * @param int    $y The y-coordinate of the pointer during the visit.
+	 * @param string $name The link name.
 	 *
-	 * @return Visit The visit object associated with the URL.
+	 * @return Visit The newly created visit object.
 	 *
-	 * @throws BaseException If an unknown error occurs.
+	 * @throws BaseException    If an error occurs while creating the visit.
 	 */
-	public static function create( $url, $device_ip, $width, $height ) {
+	public static function create( $url, $device_ip, $width, $height, $x, $y, $name ) {
 		assert( is_string( $url ) );
 
 		try {
 			user_story_db_start_transaction();
 
-			$link = self::get_link_by_url( $url );
+			$link = self::get_link_by_url( $url, $name );
 			if ( null === $link ) {
 				$url_data = self::parse_url( $url );
 				$link     = new Link();
@@ -59,11 +62,12 @@ class Links extends AbstractComponent {
 					->set_fragment( $url_data['fragment'] )
 					->set_host_name( $url_data['host'] )
 					->set_scheme( $url_data['scheme'] )
+					->set_name( $name )
 					->save();
 			}
 
 			try {
-				return Visits::create( $link, $device_ip, $width, $height );
+				return Visits::create( $link, $device_ip, $width, $height, $x, $y, $name );
 			} catch ( BaseException $e ) {
 				user_story_db_mark_rollback();
 				throw $e;
@@ -92,8 +96,8 @@ class Links extends AbstractComponent {
 		$scheme   = ! empty( $url_data['scheme'] ) ? $url_data['scheme'] : 'https';
 		$host     = ! empty( $url_data['host'] ) && strcasecmp( $url_data['host'], $site_host ) !== 0 ? $url_data['host'] : null;
 		$path     = ! empty( $url_data['path'] ) ? $url_data['path'] : '/';
-		$query    = ! empty( $url_data['query'] ) ? $url_data['query'] : null;
-		$fragment = ! empty( $url_data['fragment'] ) ? $url_data['fragment'] : null;
+		$query    = array_key_exists( 'query', $url_data ) ? $url_data['query'] : null;
+		$fragment = array_key_exists( 'fragment', $url_data ) ? $url_data['fragment'] : null;
 
 		if ( null !== $host && ! empty( $url_data['port'] ) ) {
 			$host .= ':' . $url_data['port'];
@@ -109,11 +113,11 @@ class Links extends AbstractComponent {
 	 *
 	 * @return Link|null
 	 */
-	public static function get_link_by_url( $url ) {
+	public static function get_link_by_url( $url, $name = null ) {
 
 		return self::try_set_cache(
 			sha1( $url ),
-			function () use ( $url ) {
+			function () use ( $url, $name ) {
 				global $wpdb;
 
 				$url_parts = self::parse_url( $url );
@@ -145,6 +149,11 @@ class Links extends AbstractComponent {
 				} else {
 					$where[]  = ' AND fragment = %s';
 					$params[] = $url_parts['fragment'];
+				}
+
+				if ( null !== $name ) {
+					$where[]  = ' AND name = %s';
+					$params[] = $name;
 				}
 
 				$sql .= implode( ' ', $where ) . ' FOR UPDATE';

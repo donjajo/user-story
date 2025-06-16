@@ -51,6 +51,13 @@ class Link extends AbstractObject {
 	protected $fragment = null;
 
 	/**
+	 * Link name
+	 *
+	 * @var string
+	 */
+	protected $name;
+
+	/**
 	 * Link ID
 	 *
 	 * @return int
@@ -183,6 +190,28 @@ class Link extends AbstractObject {
 	}
 
 	/**
+	 * Get Link name
+	 *
+	 * @return string
+	 */
+	public function get_name() {
+		return $this->name;
+	}
+
+	/**
+	 * Set link name
+	 *
+	 * @param string $name Link name.
+	 *
+	 * @return $this
+	 */
+	public function set_name( $name ) {
+		$this->name = $name;
+
+		return $this;
+	}
+
+	/**
 	 * Load rows to object
 	 *
 	 * @param object $row row object.
@@ -195,6 +224,8 @@ class Link extends AbstractObject {
 			->set_host_name( $row->hostname )
 			->set_query( $row->query )
 			->set_fragment( $row->fragment )
+			->set_name( $row->name )
+			->set_scheme( $row->scheme )
 			->set_id( $row->ID );
 	}
 
@@ -210,6 +241,7 @@ class Link extends AbstractObject {
 			'path'     => $this->path,
 			'query'    => $this->query,
 			'fragment' => $this->fragment,
+			'name'     => $this->name,
 		);
 	}
 

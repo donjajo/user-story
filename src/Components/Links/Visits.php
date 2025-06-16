@@ -18,22 +18,26 @@ class Visits extends AbstractComponent {
 
 
 	/**
-	 * Creates a new visit record associated with a link, device IP, and dimensions.
+	 * Creates a new visit record with the specified details and stores it in the database.
 	 *
 	 * @param Link      $link The link object associated with the visit.
 	 * @param Device_IP $device_ip The device IP object associated with the visit.
 	 * @param int       $width The width of the device screen in pixels.
 	 * @param int       $height The height of the device screen in pixels.
+	 * @param int       $x The x-coordinate for the visit position.
+	 * @param int       $y The y-coordinate for the visit position.
 	 * @return Visit The newly created visit object.
-	 * @throws BaseException If an error occurs during the creation of the visit record.
+	 * @throws BaseException If creating the visit record fails due to a database error.
 	 */
-	public static function create( $link, $device_ip, $width, $height ) {
+	public static function create( $link, $device_ip, $width, $height, $x, $y ) {
 		global $wpdb;
 
 		assert( $link instanceof Link );
 		assert( $device_ip instanceof Device_IP );
 		assert( is_int( $width ) );
 		assert( is_int( $height ) );
+
+
 
 		try {
 			user_story_db_start_transaction( $wpdb->prepare( "SELECT * FROM {$wpdb->visible_link_visits} WHERE visible_link_id = %d FOR UPDATE", $link->get_id() ) );
@@ -43,6 +47,7 @@ class Visits extends AbstractComponent {
 				->set_device_ip( $device_ip )
 				->set_width( $width )
 				->set_height( $height )
+				->set_position_xy( sprintf( '%f,%f', (float) $x, (float) $y ) )
 				->save();
 
 			return $visit;
