@@ -35,13 +35,13 @@ class Links extends AbstractComponent {
 	/**
 	 * Create a visit entry for a specified URL and device details.
 	 *
-	 * @param string $url The URL to associate with the visit.
-	 * @param string $device_ip The IP address of the device making the visit.
-	 * @param int    $width The width of the device screen.
-	 * @param int    $height The height of the device screen.
-	 * @param int    $x The x-coordinate of the pointer during the visit.
-	 * @param int    $y The y-coordinate of the pointer during the visit.
-	 * @param string $name The link name.
+	 * @param string    $url The URL to associate with the visit.
+	 * @param Device_IP $device_ip The IP address of the device making the visit.
+	 * @param int       $width The width of the device screen.
+	 * @param int       $height The height of the device screen.
+	 * @param int       $x The x-coordinate of the pointer during the visit.
+	 * @param int       $y The y-coordinate of the pointer during the visit.
+	 * @param string    $name The link name.
 	 *
 	 * @return Visit The newly created visit object.
 	 *

@@ -30,6 +30,8 @@ class Links extends AbstractRoute {
 	 */
 	protected $component;
 
+	const CREATE_NONCE_ACTION = 'user-story-create-links';
+
 	/**
 	 * Register routes
 	 *
@@ -56,9 +58,23 @@ class Links extends AbstractRoute {
 						'required' => true,
 						'type'     => 'integer',
 					),
+					'nonce'  => array(
+						'required'          => true,
+						'validate_callback' => array( $this, 'validate_nonce' ),
+					),
 				),
 			)
 		);
+	}
+
+	/**
+	 * Validates a given nonce to verify its authenticity and prevent security vulnerabilities.
+	 *
+	 * @param string $nonce The nonce to validate.
+	 * @return bool True if the nonce is valid, false otherwise.
+	 */
+	public function validate_nonce( $nonce ) {
+		return wp_verify_nonce( $nonce, self::CREATE_NONCE_ACTION );
 	}
 
 	/**

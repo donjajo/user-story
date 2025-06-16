@@ -50,6 +50,7 @@ const userStoryUpdate = async ( links ) => {
 			links,
 			height: window.screen.height,
 			width: window.screen.width,
+			nonce: window.userStoryVars.nonce,
 		},
 	} )
 		.then( ( response ) => {

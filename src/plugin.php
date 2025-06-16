@@ -91,7 +91,8 @@ class User_Story_Plugin {
 	public static function enqueue_assets() {
 		$embed_asset_file = include USER_STORY_PLUGIN_ASSETS_DIR . '/js/embed.asset.php';
 
-		wp_enqueue_script( 'embed-script', USER_STORY_PLUGIN_ASSETS_URL . '/js/embed.js', $embed_asset_file['dependencies'], $embed_asset_file['version'], true );
+		wp_enqueue_script( 'user-story-embed-script', USER_STORY_PLUGIN_ASSETS_URL . '/js/embed.js', $embed_asset_file['dependencies'], $embed_asset_file['version'], true );
+		wp_localize_script( 'user-story-embed-script', 'userStoryVars', array( 'nonce' => wp_create_nonce( Routes\Links\Links::CREATE_NONCE_ACTION ) ) );
 	}
 
 	/**
