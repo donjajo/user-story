@@ -81,6 +81,20 @@ class User_Story_Plugin {
 	}
 
 	/**
+	 * Enqueues the necessary assets for the plugin.
+	 *
+	 * This method includes the asset file which contains the dependencies and version
+	 * of the JavaScript file, and enqueues the script for use in WordPress.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_assets() {
+		$embed_asset_file = include USER_STORY_PLUGIN_ASSETS_DIR . '/js/embed.asset.php';
+
+		wp_enqueue_script( 'embed-script', USER_STORY_PLUGIN_ASSETS_URL . '/js/embed.js', $embed_asset_file['dependencies'], $embed_asset_file['version'], true );
+	}
+
+	/**
 	 * Create MySQL tables
 	 *
 	 * @return void

@@ -1,0 +1,20 @@
+{
+  "name": "user-story",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:wp-media/package-template.git",
+  "author": "James Etu <me@donjajo.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "wp-scripts start js/embed.js --output-path=assets/js",
+    "build": "wp-scripts build js/embed.js --output-path=assets/js",
+	  "format": "wp-scripts format js/",
+	  "lint:js": "wp-scripts lint-js js/"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^30.18.0"
+  },
+  "dependencies": {
+    "@wordpress/api-fetch": "^7.25.0"
+  }
+}

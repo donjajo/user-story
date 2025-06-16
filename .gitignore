@@ -2,3 +2,6 @@
 /Tests/env/local/
 *.cache
 composer.lock
+.idea/
+yarn.lock
+node_modules
