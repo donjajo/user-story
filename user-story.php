@@ -3,15 +3,15 @@
  * Plugin Template
  *
  * @package     user-story
- * @author      Mathieu Lamiot
- * @copyright   TO FILL
+ * @author      James Etu
+ * @copyright   2025
  * @license     GPL-2.0-or-later
  *
  * @wordpress-plugin
  * Plugin Name: User Story Plugin
  * Version:     1.0.0
- * Description: TO FILL
- * Author:      Mathieu Lamiot
+ * Description: User Story plugin for WP Media Test
+ * Author:      James Etu
  */
 
 namespace USER_STORY;
@@ -30,13 +30,6 @@ if ( ! defined( 'ABSPATH' ) ) { // If WordPress is not loaded.
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/src/plugin.php';
 require_once __DIR__ . '/vendor/autoload.php';
-
-// Plugin initialization.
-/**
- * Creates the plugin object on plugins_loaded hook
- *
- * @return void
- */
 
 new User_Story_Plugin();
 

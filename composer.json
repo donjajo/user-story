@@ -1,14 +1,14 @@
 {
-    "name"          : "wp-media/package-template",
-    "description"   : "WP Plugin template for WP Media.",
+    "name"          : "donjajo/user-story",
+    "description"   : "WP Plugin for user story task.",
     "type"          : "project",
     "keywords"      : ["wordpress", "wp", "plugin"],
-    "homepage"      : "https://github.com/wp-media/package-template",
+    "homepage"      : "https://github.com/donjajo/user-story",
     "license"       : "GPL-2.0+",
     "authors"       : [
         {
-            "name": "Mathieu Lamiot",
-            "email": "mathieu@wp-media.me"
+            "name": "James Etu",
+            "email": "donjajo@yahoo.com"
         }
     ],
     "require"       : {
