@@ -7,9 +7,13 @@ When creating a new repository for a package or a plugin, select this repository
 - Have a mysql DB ready and a user.
 - Have `svn` installed.
 - Run `composer install`
+- Run `npm install`
+- Run `npm run build`
 - Run `bash bin/install-wp-tests.sh wordpress_test mysql_user mysql_password localhost latest`
 - Run `composer run-tests`
 - Run `composer phpcs`
+- Run `npm run lint:js`
+- Run `npm run format`
 - You can install the plugin on your website.
 
 # Content
