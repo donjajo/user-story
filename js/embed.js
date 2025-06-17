@@ -159,9 +159,9 @@ const userStoryObserverCallback = ( entries ) => {
 			if ( sanizeHref( entry.target ) !== null ) {
 				const link = userStoryMkLink( entry.target );
 
-				if (link.name.length > 0) {
-					hashValue += `${link.url}${link.name}${link.x}${link.y}`;
-					visibleLinks.push(link);
+				if ( link.name.length > 0 ) {
+					hashValue += `${ link.url }${ link.name }${ link.x }${ link.y }`;
+					visibleLinks.push( link );
 				}
 			}
 		}
