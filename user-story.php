@@ -12,6 +12,8 @@
  * Version:     1.0.0
  * Description: User Story plugin for WP Media Test
  * Author:      James Etu
+ * Requires at least: 6.0
+ * Requires PHP: 7.3
  */
 
 namespace USER_STORY;
