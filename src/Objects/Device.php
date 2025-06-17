@@ -3,7 +3,6 @@
 namespace USER_STORY\Objects;
 
 use DateTime;
-use Ramsey\Uuid\Uuid;
 use USER_STORY\Exceptions\DatabaseException;
 use WP_User;
 
@@ -162,7 +161,7 @@ class Device extends AbstractObject {
 			$ret = $wpdb->update( $wpdb->devices, $this->column_map(), array( 'uuid' => $this->uuid ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		} else {
 			$values         = $this->column_map();
-			$values['uuid'] = Uuid::uuid4()->toString();
+			$values['uuid'] = user_story_uuid4();
 			$this->uuid     = $values['uuid'];
 			$ret            = $wpdb->insert( $wpdb->devices, $values ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		}
