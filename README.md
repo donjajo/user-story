@@ -16,6 +16,9 @@ When creating a new repository for a package or a plugin, select this repository
 - Run `npm run format`
 - You can install the plugin on your website.
 
+# Generate Plugin Zip
+- Run `npm run plugin-zip` to get a production enhanced plugin zip file
+
 # Content
 * `bin/install-wp-tests.sh`: installer for WordPress tests suite
 * `.editorconfig`: config file for your IDE to follow our coding standards

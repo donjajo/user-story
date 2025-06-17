@@ -9,7 +9,8 @@
     "start": "wp-scripts start js/embed.js js/settings.js --output-path=assets/js",
     "build": "wp-scripts build js/embed.js js/settings.js --output-path=assets/js",
     "format": "wp-scripts format js/",
-    "lint:js": "wp-scripts lint-js js/"
+    "lint:js": "wp-scripts lint-js js/",
+	  "plugin-zip": "composer install --no-dev && wp-scripts plugin-zip"
   },
   "devDependencies": {
     "@wordpress/scripts": "27.8.0"
@@ -23,5 +24,16 @@
     "@wordpress/url": "^4.25.0",
     "js-sha1": "^0.7.0",
     "moment": "^2.30.1"
-  }
+  },
+	"files": [
+		"assets/",
+		"src/",
+		"vendor/",
+		"composer.json",
+		"functions.php",
+		"index.php",
+		"LICENSE",
+		"README.md",
+		"user-story.php"
+	]
 }
