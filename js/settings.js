@@ -1,7 +1,7 @@
 'use strict';
 
 import domReady from '@wordpress/dom-ready';
-import { createRoot, useEffect, useState } from '@wordpress/element';
+import { useEffect, useState, render } from '@wordpress/element';
 import {
 	Panel,
 	PanelBody,
@@ -242,7 +242,15 @@ const SettingsPage = () => {
 };
 
 domReady( () => {
-	const root = createRoot( document.getElementById( 'user-story-settings' ) );
+	const root = document.getElementById( 'user-story-settings' );
 
-	root.render( <SettingsPage /> );
+	if ( typeof root !== 'undefined' && root !== null ) {
+		render( <SettingsPage />, root );
+	}
+
+	// const root = createRoot(
+	// 	document.getElementById( 'user-story-settings' )
+	// );
+	//
+	// root.render( <SettingsPage /> );
 } );

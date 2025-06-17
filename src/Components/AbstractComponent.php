@@ -11,24 +11,13 @@ use USER_STORY\Cronies\AbstractCronie;
 abstract class AbstractComponent {
 
 	/**
-	 * Component name
-	 *
-	 * @var null|string
-	 */
-	private static $component_name = null;
-
-	/**
 	 * Get component name
 	 *
 	 * @return null
 	 */
 	public static function component_name() {
-		if ( ! static::$component_name ) {
-			$ref                    = new \ReflectionClass( static::class );
-			static::$component_name = $ref->getShortName();
-		}
-
-		return static::$component_name;
+		$ref = new \ReflectionClass( static::class );
+		return $ref->getShortName();
 	}
 
 	/**
